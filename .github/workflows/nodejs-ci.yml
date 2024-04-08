@@ -50,11 +50,19 @@ jobs:
           PGPASSWORD: admin
           PGDATABASE: MediOnco_db
         run: |
-          psql -d MediOnco_db -f migrations/001-init-schema.sql
-          psql -d MediOnco_db -f migrations/002-seed-data.sql
+          psql -U postgres -c 'CREATE DATABASE MediOnco_db;'
+          psql -U postgres -d MediOnco_db -a -f migrations/001-init-schema.sql
+          psql -U postgres -d MediOnco_db -a -f migrations/002-seed-data.sql
+
 
       - name: Run Build
         run: npm run build --if-present
+
+      - name: Debug Database Setup
+        run: |
+          psql -U postgres -d MediOnco_db -c '\dt'
+          psql -U postgres -d MediOnco_db -c 'SELECT * FROM Users;'
+
 
       - name: Run Tests
         env:
