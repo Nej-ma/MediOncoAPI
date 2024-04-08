@@ -1,7 +1,7 @@
 -- migrations/001-init-schema.sql
 
 -- Users Table
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
     ID SERIAL PRIMARY KEY,
     Username VARCHAR(255) UNIQUE NOT NULL,
     Password VARCHAR(255) NOT NULL,
@@ -10,8 +10,19 @@ CREATE TABLE Users (
     password_changed BOOLEAN DEFAULT FALSE 
 );
 
+-- Doctors Table
+CREATE TABLE IF NOT EXISTS Doctors (
+    ID SERIAL PRIMARY KEY,
+    Name VARCHAR(255),
+    FirstName VARCHAR(255),
+    Specialty VARCHAR(255),
+    Contact VARCHAR(255),
+    deleted_at TIMESTAMP DEFAULT NULL,
+    UserID INT REFERENCES Users(ID)
+);
+
 -- Patients Table
-CREATE TABLE Patients (
+CREATE TABLE IF NOT EXISTS Patients (
     ID SERIAL PRIMARY KEY,
     Name VARCHAR(255),
     FirstName VARCHAR(255),
@@ -24,19 +35,8 @@ CREATE TABLE Patients (
     DoctorID INT REFERENCES Doctors(ID)
 );
 
--- Doctors Table
-CREATE TABLE Doctors (
-    ID SERIAL PRIMARY KEY,
-    Name VARCHAR(255),
-    FirstName VARCHAR(255),
-    Specialty VARCHAR(255),
-    Contact VARCHAR(255),
-    deleted_at TIMESTAMP DEFAULT NULL,
-    UserID INT REFERENCES Users(ID)
-);
-
 -- Medical Records Table
-CREATE TABLE MedicalRecords (
+CREATE TABLE IF NOT EXISTS MedicalRecords (
     ID SERIAL PRIMARY KEY,
     PatientID INT REFERENCES Patients(ID),
     VisitHistory TEXT,
@@ -47,7 +47,7 @@ CREATE TABLE MedicalRecords (
 );
 
 -- Treatments Table
-CREATE TABLE Treatments (
+CREATE TABLE IF NOT EXISTS Treatments (
     ID SERIAL PRIMARY KEY,
     RecordID INT REFERENCES MedicalRecords(ID),
     Description TEXT,
@@ -59,7 +59,7 @@ CREATE TABLE Treatments (
 );
 
 -- Prescriptions Table
-CREATE TABLE Prescriptions (
+CREATE TABLE IF NOT EXISTS Prescriptions (
     ID SERIAL PRIMARY KEY,
     TreatmentID INT REFERENCES Treatments(ID),
     Medication VARCHAR(255),
@@ -69,7 +69,7 @@ CREATE TABLE Prescriptions (
 );
 
 -- Medical Exams Table
-CREATE TABLE MedicalExams (
+CREATE TABLE IF NOT EXISTS MedicalExams (
     ID SERIAL PRIMARY KEY,
     Type VARCHAR(255),
     Date DATE,
@@ -81,7 +81,7 @@ CREATE TABLE MedicalExams (
 );
 
 -- Appointments Table
-CREATE TABLE Appointments (
+CREATE TABLE IF NOT EXISTS Appointments (
     ID SERIAL PRIMARY KEY,
     PatientID INT REFERENCES Patients(ID),
     DoctorID INT REFERENCES Doctors(ID),
@@ -92,7 +92,7 @@ CREATE TABLE Appointments (
 );
 
 -- Message Threads Table
-CREATE TABLE MessageThreads (
+CREATE TABLE IF NOT EXISTS MessageThreads (
     ID SERIAL PRIMARY KEY,
     Participant1 INT REFERENCES Users(ID),
     Participant2 INT REFERENCES Users(ID),
@@ -100,7 +100,7 @@ CREATE TABLE MessageThreads (
 );
 
 -- Messages Table
-CREATE TABLE Messages (
+CREATE TABLE IF NOT EXISTS Messages (
     ID SERIAL PRIMARY KEY,
     ThreadID INT REFERENCES MessageThreads(ID),
     SenderID INT REFERENCES Users(ID),
@@ -110,7 +110,7 @@ CREATE TABLE Messages (
 );
 
 -- Documents Table
-CREATE TABLE Documents (
+CREATE TABLE IF NOT EXISTS Documents (
     ID SERIAL PRIMARY KEY,
     PatientID INT REFERENCES Patients(ID),
     Type VARCHAR(255),
