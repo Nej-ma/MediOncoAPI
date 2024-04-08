@@ -64,4 +64,4 @@ jobs:
           DB_PORT: 5432
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
-          npm test || (echo "Tests failed. Dumping logs:" && cat /path/to/your/log/file.log)
+          npm test || (echo "Tests failed. Dumping logs:" && cat /log.txt && exit 1)
