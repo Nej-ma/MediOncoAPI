@@ -40,31 +40,19 @@ jobs:
       - name: Wait for PostgreSQL to start
         run: until pg_isready -h localhost -p 5432; do sleep 1; done
       
-      - name: List directory contents
-        run: ls -R
-      
-      - name: Set up Database
+      - name: Run Database Migrations
         env:
-          PGHOST: localhost
-          PGUSER: admin
           PGPASSWORD: admin
-          PGDATABASE: MediOnco_db
         run: |
-          psql -U postgres -c 'CREATE DATABASE MediOnco_db;'
-          psql -U postgres -d MediOnco_db -a -f migrations/001-init-schema.sql
-          psql -U postgres -d MediOnco_db -a -f migrations/002-seed-data.sql
-
-
-      - name: Run Build
-        run: npm run build --if-present
-
-      - name: Debug Database Setup
-        run: |
-          psql -U postgres -d MediOnco_db -c '\dt'
-          psql -U postgres -d MediOnco_db -c 'SELECT * FROM Users;'
-
+          psql -h localhost -U admin -d MediOnco_db -a -f migrations/001-init-schema.sql
+          psql -h localhost -U admin -d MediOnco_db -a -f migrations/002-seed-data.sql
 
       - name: Run Tests
         env:
-          DATABASE_URL: postgres://admin:admin@localhost:5432/MediOnco_db
+          DB_USER: admin
+          DB_PASSWORD: admin
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: MediOnco_db
+          JWT_SECRET: bee2413d8647b85cb2540c30f746a434236cb6bed812c5e8109b94b4597073d4
         run: npm test
