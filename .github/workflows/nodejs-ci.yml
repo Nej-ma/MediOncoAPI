@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -39,13 +39,25 @@ jobs:
         
       - name: Wait for PostgreSQL to start
         run: until pg_isready -h localhost -p 5432; do sleep 1; done
-      
+
+      - name: Print environment variables for debugging
+        run: |
+          echo "Database User: ${{ env.POSTGRES_USER }}"
+          echo "Database Password: ${{ secrets.POSTGRES_PASSWORD }}"
+          echo "Database: ${{ env.POSTGRES_DB }}"
+          echo "Host: localhost"
+          echo "Port: 5432"
+          
       - name: Run Database Migrations
         env:
           PGPASSWORD: admin
         run: |
           psql -h localhost -U admin -d MediOnco_db -a -f migrations/001-init-schema.sql
           psql -h localhost -U admin -d MediOnco_db -a -f migrations/002-seed-data.sql
+
+      - name: Print PostgreSQL service logs (Optional - for debugging)
+        if: failure() # Only if previous steps failed
+        run: docker logs ${{ job.services.postgres.id }}
 
       - name: Run Tests
         env:
