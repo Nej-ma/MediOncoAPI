@@ -41,15 +41,18 @@ jobs:
         run: until pg_isready -h localhost -p 5432; do sleep 1; done
       
       - name: Set up Database
+      - name: List directory contents
+        run: ls -R
+
         env:
           PGHOST: localhost
           PGUSER: admin
           PGPASSWORD: admin
           PGDATABASE: MediOnco_db
         run: |
-          chmod +x MediOncoAPI/migrations/*.sql
-          psql -d MediOnco_db -f MediOncoAPI/migrations/001-create-tables.sql
-          psql -d MediOnco_db -f MediOncoAPI/migrations/002-seed-data.sql
+          chmod +x migrations/*.sql
+          psql -d MediOnco_db -f migrations/001-create-tables.sql
+          psql -d MediOnco_db -f migrations/002-seed-data.sql
 
       - name: Run Build
         run: npm run build --if-present
