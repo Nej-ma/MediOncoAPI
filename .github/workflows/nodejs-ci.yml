@@ -12,11 +12,11 @@ jobs:
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres
         env:
-          POSTGRES_DB: MediOnco_db
           POSTGRES_USER: admin
           POSTGRES_PASSWORD: admin
+          POSTGRES_DB: testdb
         ports:
           - 5432:5432
         options: >-
@@ -25,19 +25,18 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build --if-present
-      - name: Wait for PostgreSQL
-        run: until pg_isready -h localhost -p 5432; do sleep 1; done
-      - run: npm test
+    - uses: actions/checkout@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        cache: 'npm'
+    - run: npm ci
+    - name: Wait for PostgreSQL to become ready
+      run: until pg_isready -h localhost -p 5432; do sleep 1; done
+    - name: Set up Database
+      run: |
+        PGPASSWORD=admin psql -h localhost -U admin -d testdb -a -f migrations/001-init-schema.sql
+        PGPASSWORD=admin psql -h localhost -U admin -d testdb -a -f migrations/002-seed-data.sql
+    - run: npm test
