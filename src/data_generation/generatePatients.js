@@ -73,7 +73,7 @@ const insertPatientAndRelatedData = async (patientData) => {
 
         const insertTreatments = async (patientId, medicalRecordId) => {
             const treatmentDescriptions = ["Chimiothérapie", "Radiologie", "Immunothérapie"];
-            const startDate = faker.date.past(2, new Date());
+            const startDate = faker.date.between(new Date(), new Date(2024, 12, 12));
             const endDate = faker.date.future(2, startDate);
             const dosage = faker.number.int({min: 1, max: 3}) + " fois par jour";            
         

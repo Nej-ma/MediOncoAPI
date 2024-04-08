@@ -1,6 +1,6 @@
 // src/models/appointmentModel.js
 
-class Appointment {
+export default class Appointment {
     constructor(id, patientId, doctorId, date, time, purpose, deletedAt) {
         this.id = id;
         this.patientId = patientId;
@@ -11,5 +11,3 @@ class Appointment {
         this.deletedAt = deletedAt;
     }
 }
-
-module.exports = Appointment;
