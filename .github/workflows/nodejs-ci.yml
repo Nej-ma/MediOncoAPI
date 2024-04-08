@@ -50,8 +50,7 @@ jobs:
           PGPASSWORD: admin
           PGDATABASE: MediOnco_db
         run: |
-          chmod +x migrations/*.sql
-          psql -d MediOnco_db -f migrations/001-create-tables.sql
+          psql -d MediOnco_db -f migrations/001-init-schema.sql
           psql -d MediOnco_db -f migrations/002-seed-data.sql
 
       - name: Run Build
