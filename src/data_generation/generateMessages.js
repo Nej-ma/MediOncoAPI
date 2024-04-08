@@ -1,4 +1,4 @@
-import {fr, fakerfr} from '@faker-js/faker';
+import { fakerFR as faker } from '@faker-js/faker';
 import pkg from 'pg';
 const { Pool } = pkg;
 
@@ -25,11 +25,11 @@ const createMessageThreadAndMessages = async () => {
                 const threadId = threadResult.rows[0].id;
 
                 // Générer 5 à 10 messages aléatoires pour ce fil
-                const numMessages = fakerfr.datatype.number({ min: 5, max: 10 });
+                const numMessages = faker.datatype.number({ min: 5, max: 10 });
                 for (let k = 0; k < numMessages; k++) {
-                    const senderId = fakerfr.random.arrayElement([doctorUserIds[i], doctorUserIds[j]]);
-                    const content = fakerfr.lorem.sentence();
-                    const sendDate = fakerfr.date.past(1);
+                    const senderId = faker.random.arrayElement([doctorUserIds[i], doctorUserIds[j]]);
+                    const content = faker.lorem.sentence();
+                    const sendDate = faker.date.past(1);
 
                     const messageInsertQuery = `INSERT INTO Messages (ThreadID, SenderID, Content, SendDate) VALUES ($1, $2, $3, $4)`;
                     await client.query(messageInsertQuery, [threadId, senderId, content, sendDate]);
