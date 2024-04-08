@@ -47,6 +47,7 @@ jobs:
           PGPASSWORD: admin
           PGDATABASE: MediOnco_db
         run: |
+          chmod +x backend/MediOncoAPI/migrations/*.sql
           psql -d MediOnco_db -f MediOncoAPI/migrations/001-create-tables.sql
           psql -d MediOnco_db -f MediOncoAPI/migrations/002-seed-data.sql
 
