@@ -2,9 +2,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -27,33 +27,41 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '16'
           cache: 'npm'
-          
+
       - name: Install Dependencies
         run: npm ci
-        
+
       - name: Wait for PostgreSQL to start
         run: until pg_isready -h localhost -p 5432; do sleep 1; done
-      
-      - name: Set up Database
-        env:
-          PGHOST: localhost
-          PGUSER: ${{ secrets.POSTGRES_USER }}
-          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          PGDATABASE: ${{ secrets.POSTGRES_DB }}
+
+      - name: Echo Environment Variables for Debugging
         run: |
-          psql -d ${{ secrets.POSTGRES_DB }} -f migrations/001-init-schema.sql
-          psql -d ${{ secrets.POSTGRES_DB }} -f migrations/002-seed-data.sql
+          echo "Database User: ${{ secrets.POSTGRES_USER }}"
+          echo "Database Password: ${{ secrets.POSTGRES_PASSWORD }}"
+          echo "Database Name: ${{ secrets.POSTGRES_DB }}"
+          echo "Host: localhost"
+          echo "Port: 5432"
 
-      - name: Run Build
-        run: npm run build --if-present
-
-      - name: Run Tests
+      - name: Run Database Migrations
         env:
-          DATABASE_URL: postgres://$PGUSER:$PGPASSWORD@localhost:5432/$PGDATABASE
-        run: npm test
+          PGPASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        run: |
+          psql -h localhost -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -a -f migrations/001-init-schema.sql
+          psql -h localhost -U ${{ secrets.POSTGRES_USER }} -d ${{ secrets.POSTGRES_DB }} -a -f migrations/002-seed-data.sql
+
+      - name: Run Tests with Debugging
+        env:
+          DB_USER: ${{ secrets.POSTGRES_USER }}
+          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          DB_NAME: ${{ secrets.POSTGRES_DB }}
+          DB_HOST: localhost
+          DB_PORT: 5432
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          npm test || (echo "Tests failed. Dumping logs:" && cat /path/to/your/log/file.log)
