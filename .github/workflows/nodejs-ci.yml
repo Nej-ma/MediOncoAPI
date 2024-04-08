@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     services:
@@ -27,37 +26,34 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-        cache: 'npm'
-    - name: Clear npm cache
-      run: npm cache clean --force
-
-    - name: Install Dependencies
-      run: npm ci
+      - uses: actions/checkout@v2
       
-    - name: Wait for PostgreSQL to start
-      run: until pg_isready -h localhost -p 5432; do sleep 1; done
-    
-    - name: Set up Database
-      env:
-        PGHOST: localhost
-        PGUSER: admin
-        PGPASSWORD: admin
-        PGDATABASE: MediOnco_db
-      run: |
-        psql -c 'CREATE DATABASE MediOnco_db;'
-        psql -d MediOnco_db -f ../../migrations/001-create-tables.sql
-        psql -d MediOnco_db -f ../../migrations/002-seed-data.sql
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Wait for PostgreSQL to start
+        run: until pg_isready -h localhost -p 5432; do sleep 1; done
+      
+      - name: Set up Database
+        env:
+          PGHOST: localhost
+          PGUSER: admin
+          PGPASSWORD: admin
+          PGDATABASE: MediOnco_db
+        run: |
+          psql -d MediOnco_db -f migrations/001-create-tables.sql
+          psql -d MediOnco_db -f migrations/002-seed-data.sql
 
-    - name: Run Build
-      run: npm run build --if-present
+      - name: Run Build
+        run: npm run build --if-present
 
-    - name: Run Tests
-      env:
-        DATABASE_URL: postgres://admin:admin@localhost:5432/MediOnco_db
-      run: npm test
+      - name: Run Tests
+        env:
+          DATABASE_URL: postgres://admin:admin@localhost:5432/MediOnco_db
+        run: npm test
