@@ -1,0 +1,25 @@
+{
+  "name": "medioncoapi",
+  "version": "1.0.0",
+  "description": "MediOnco webservice 1.0",
+  "main": "app.js",
+  "type": "module",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "Nejma Moualhi",
+  "license": "ISC",
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "faker": "^6.6.6",
+    "jsonwebtoken": "^9.0.2",
+    "nodemon": "^3.0.3"
+  }
+}
