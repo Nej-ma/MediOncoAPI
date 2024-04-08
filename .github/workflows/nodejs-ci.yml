@@ -36,7 +36,7 @@ jobs:
         cache: 'npm'
     - name: Clear npm cache
       run: npm cache clean --force
-      
+
     - name: Install Dependencies
       run: npm ci
       
@@ -51,8 +51,8 @@ jobs:
         PGDATABASE: MediOnco_db
       run: |
         psql -c 'CREATE DATABASE MediOnco_db;'
-        psql -d MediOnco_db -f migrations/001-create-tables.sql
-        psql -d MediOnco_db -f migrations/002-seed-data.sql
+        psql -d MediOnco_db -f ../../migrations/001-create-tables.sql
+        psql -d MediOnco_db -f ../../migrations/002-seed-data.sql
 
     - name: Run Build
       run: npm run build --if-present
