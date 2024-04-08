@@ -40,10 +40,10 @@ jobs:
       - name: Wait for PostgreSQL to start
         run: until pg_isready -h localhost -p 5432; do sleep 1; done
       
-      - name: Set up Database
       - name: List directory contents
         run: ls -R
-
+      
+      - name: Set up Database
         env:
           PGHOST: localhost
           PGUSER: admin
