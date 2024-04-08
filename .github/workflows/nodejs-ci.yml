@@ -47,8 +47,8 @@ jobs:
           PGPASSWORD: admin
           PGDATABASE: MediOnco_db
         run: |
-          psql -d MediOnco_db -f migrations/001-create-tables.sql
-          psql -d MediOnco_db -f migrations/002-seed-data.sql
+          psql -d MediOnco_db -f backend/MediOncoAPI/migrations/001-create-tables.sql
+          psql -d MediOnco_db -f backend/MediOncoAPI/migrations/002-seed-data.sql
 
       - name: Run Build
         run: npm run build --if-present
