@@ -35,7 +35,8 @@ export const login = async (req, res, next) => {
 
 export const getUserInfo = async (req, res, next) => {
     try {
-        const userId = req.user.userId;
+        console.log('User info:', req.user);
+        const userId = req.user.id;
         const userInfo = await userDAO.findById(userId);
         
         if (!userInfo) {
@@ -43,12 +44,16 @@ export const getUserInfo = async (req, res, next) => {
         }
 
         // If the user is a doctor, fetch additional info
+        console.log('User role:', userInfo.role);
         if (userInfo.role === 'doctor') {
+            console.log('is doctor', userId);
             const doctorInfo = await doctorDAO.findByUserId(userId);
+            console.log('Doctor info:', doctorInfo);
             return res.json({ ...userInfo, ...doctorInfo });
         }
 
         // For admin or other roles, adjust as needed
+        console.log('User info:', userInfo);
         res.json(userInfo);
     } catch (error) {
         next(error);

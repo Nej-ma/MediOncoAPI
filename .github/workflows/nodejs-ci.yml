@@ -62,6 +62,6 @@ jobs:
           DB_NAME: MediOnco_db
           DB_HOST: localhost
           DB_PORT: 5432
-          JWT_SECRET: your_jwt_secret_here
+          JWT_SECRET: bee2413d8647b85cb2540c30f746a434236cb6bed812c5e8109b94b4597073d4
         run: |
           npm test || (echo "Tests failed. Dumping database info:" && psql -h localhost -U admin -d MediOnco_db -c "SELECT * FROM Patients;" && exit 1)

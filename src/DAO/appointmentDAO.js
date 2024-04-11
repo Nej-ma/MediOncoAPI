@@ -15,9 +15,13 @@ export default {
     },
     findNextByDoctorId: async (doctorId) => {
         const { rows } = await pool.query(
-            'SELECT * FROM Appointments WHERE doctorid = $1 AND date >= CURRENT_DATE AND (date > CURRENT_DATE OR (date = CURRENT_DATE AND time > CURRENT_TIME)) ORDER BY date ASC, time ASC LIMIT 1',
+            `SELECT * FROM Appointments 
+             WHERE doctorid = $1 AND deleted_at IS NULL 
+             AND (date > CURRENT_DATE OR (date = CURRENT_DATE AND time >= CURRENT_TIME))
+             ORDER BY date ASC, time ASC LIMIT 1`,
             [doctorId]
         );
+        console.log("rows next appointment : ", rows)
         return rows[0];
     },
     findAllByPatientId: async (patientId) => {

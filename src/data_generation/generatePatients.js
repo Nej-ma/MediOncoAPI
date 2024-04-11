@@ -5,6 +5,7 @@ import pkg from 'pg';
 const { Pool } = pkg;
 dotenv.config();
 
+
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -14,16 +15,24 @@ const pool = new Pool({
 });
 
 
+
 const generatePatientData = () => {
     const gender = faker.number.int({ min: 1, max: 2 }); // 1: Homme, 2: Femme
     const firstName = faker.person.firstName(gender === 1 ? 'male' : 'female');
     const lastName = faker.person.lastName();
     const dateOfBirth = faker.date.between({ from: '1950-01-01', to: '2010-12-31' });
     const address = faker.location.streetAddress();
-    const socialSecurityNumber = `${gender}${faker.number.int({ min: 10, max: 99 })}${faker.number.int({ min: 1, max: 12 }).toString().padStart(2, '0')}${faker.number.int({ min: 10000, max: 99999 })}${faker.number.int({ min: 100, max: 999 })}`;
+    const yearOfBirth = dateOfBirth.getFullYear().toString().slice(-2).padStart(2, '0');
+    const monthOfBirth = (dateOfBirth.getMonth() + 1).toString().padStart(2, '0');
+    const departmentOfBirth = faker.number.int({ min: 1, max: 95 }).toString().padStart(2, '0');
+    const inseeCommuneNumber = faker.number.int({ min: 100, max: 999 }).toString().padStart(3, '0');
+    const registrationOrder = faker.number.int({ min: 1, max: 999 }).toString().padStart(3, '0');
+    const securityKey = faker.number.int({ min: 1, max: 97 }).toString().padStart(2, '0');
+    
+    const socialSecurityNumber = `${gender}${yearOfBirth}${monthOfBirth}${departmentOfBirth}${inseeCommuneNumber}${registrationOrder}${securityKey}`;
+    
     const medicalHistory = faker.lorem.paragraph();
-    const doctorId = faker.helpers.arrayElement([1, 3, 4]); // IDs des docteurs existants
-
+    const doctorId = faker.helpers.arrayElement([1, 3, 4]);
     return {
         name: lastName,
         firstName: firstName,

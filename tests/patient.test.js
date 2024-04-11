@@ -40,7 +40,6 @@ describe('GET /patients', () => {
     });
 });
 
-// Additional tests for other endpoints like POST, GET by ID, PUT, DELETE, etc., can be similarly structured.
 
 afterAll(done => {
     if (server) {

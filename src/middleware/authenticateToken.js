@@ -9,11 +9,14 @@ function authenticateToken(req, res, next) {
     
     if (token == null) return res.sendStatus(401);
     
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
         if (err) return res.sendStatus(403);
-        req.user = user;
+
+        // Adjust here to match the structure of your JWT payload
+        req.user = { id: payload.userId, role: payload.role };
         next();
     });
 }
+
 
 export default authenticateToken;
